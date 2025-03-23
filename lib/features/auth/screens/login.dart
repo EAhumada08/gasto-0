@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gasto_0/features/auth/screens/sigup.dart';
 import 'package:gasto_0/features/auth/widgets/input_login.dart';
 
 class Login extends StatefulWidget {
@@ -9,36 +10,51 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController _userController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
+
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          textAlign: TextAlign.center,
+          'Gasto 0',
+          style: Theme.of(context).primaryTextTheme.titleLarge,
+        ),
+      ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: 350,
           height: 500,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: [
-              Text(
-                'Gasto 0',
-                style: Theme.of(context).primaryTextTheme.titleLarge,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 40,
+                children: [
+                  Text('Bienvenido',
+                      style: Theme.of(context).primaryTextTheme.titleLarge),
+                  Inputlogin(
+                      label: 'Usuario',
+                      icono: Icons.person,
+                      controller: userController),
+                  Inputlogin(
+                      label: 'Contraseña',
+                      isPassword: true,
+                      icono: Icons.lock,
+                      controller: passwordController),
+                ],
               ),
-              Text('Bienvenido',
-                  style: Theme.of(context).primaryTextTheme.titleMedium),
-              Inputlogin(label: 'Usuario', controller: _userController),
-              Inputlogin(
-                  label: 'Contraseña',
-                  isPassword: true,
-                  controller: _passwordController),
               ElevatedButton(
                 onPressed: () {
-                  print(_passwordController.text);
-                  _passwordController.clear();
-                  _userController.clear();
+                  print(passwordController.text);
+                  passwordController.clear();
+                  userController.clear();
                 },
                 style: ButtonStyle(
                   padding: WidgetStatePropertyAll(EdgeInsets.all(15)),
@@ -50,6 +66,40 @@ class _LoginState extends State<Login> {
                   style: TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('¿Olvidaste tu contraseña?',
+                          style:
+                              Theme.of(context).primaryTextTheme.labelMedium),
+                      TextButton(
+                        child: Text('Recuperar'),
+                        onPressed: () {},
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('¿No tienes cuenta?',
+                          style:
+                              Theme.of(context).primaryTextTheme.labelMedium),
+                      TextButton(
+                        child: Text('Registrate'),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUp()));
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              )
             ],
           ),
         ),
