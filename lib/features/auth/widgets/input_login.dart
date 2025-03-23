@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 
-class Inputlogin extends StatefulWidget {
+class Inputlogin extends StatelessWidget {
   final String label;
   final bool isPassword;
+  final IconData? icono;
   final TextEditingController controller;
   const Inputlogin({
     super.key,
     required this.label,
     this.isPassword = false,
+    this.icono,
     required this.controller,
   });
 
-  @override
-  State<Inputlogin> createState() => _InputloginState();
-}
-
-class _InputloginState extends State<Inputlogin> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -26,17 +23,17 @@ class _InputloginState extends State<Inputlogin> {
         SizedBox(
             width: 200,
             child: Text(
-              widget.label,
+              label,
               style: Theme.of(context).primaryTextTheme.labelMedium,
             )),
         SizedBox(
           width: 300,
           child: TextField(
-            key: ValueKey(widget.label),
-            controller: widget.controller,
-            obscureText: widget.isPassword,
+            key: ValueKey(label),
+            controller: controller,
+            obscureText: isPassword,
             decoration: InputDecoration(
-              prefixIcon: Icon(icon),
+              prefixIcon: icono != null ? Icon(icono) : null,
               border: OutlineInputBorder(),
             ),
           ),
@@ -44,6 +41,4 @@ class _InputloginState extends State<Inputlogin> {
       ],
     );
   }
-
-  IconData get icon => widget.isPassword ? Icons.lock : Icons.person;
 }
