@@ -14,7 +14,7 @@ class SignUp extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 50,
           children: [
             Text(
@@ -24,20 +24,13 @@ class SignUp extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 10,
+              spacing: 20,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 10,
-                  children: [
-                    Inputlogin(label: 'Nombre', controller: nombreController),
-                    Inputlogin(
-                        label: 'Apellidos', controller: apellidoController),
-                  ],
-                ),
+                Inputlogin(label: 'Nombre', controller: nombreController),
+                Inputlogin(label: 'Apellidos', controller: apellidoController),
                 Inputlogin(label: 'Correo', controller: correoController),
                 Inputlogin(
-                  label: 'Contrasena',
+                  label: 'Contraseña',
                   controller: passwordController,
                   isPassword: true,
                 ),
