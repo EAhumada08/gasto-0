@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:gasto_0/features/auth/providers/auth_provider.dart';
 import 'package:gasto_0/main_theme.dart';
+import 'package:provider/provider.dart';
 import 'features/auth/screens/login.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
