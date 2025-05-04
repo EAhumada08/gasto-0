@@ -63,7 +63,9 @@ class _LoginState extends State<Login> {
             authProvider.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/');
+                      /*() async {
                       final success = await authProvider.login(
                         userController.text.trim(),
                         passwordController.text.trim(),
@@ -77,7 +79,7 @@ class _LoginState extends State<Login> {
                       }
                       print(passwordController.text);
                       passwordController.clear();
-                      userController.clear();
+                      userController.clear();*/
                     },
                     style: ButtonStyle(
                       padding: WidgetStatePropertyAll(EdgeInsets.all(15)),
