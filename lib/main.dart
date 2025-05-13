@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gasto_0/features/auth/providers/auth_provider.dart';
-import 'package:gasto_0/features/home/screens/dashboard.dart';
 import 'package:gasto_0/main_theme.dart';
 import 'package:gasto_0/routes/routes.dart';
 import 'package:provider/provider.dart';
-import 'features/auth/screens/login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
