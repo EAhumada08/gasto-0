@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gasto_0/Models/user.dart';
 import 'package:gasto_0/core/services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -24,6 +25,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> isAuthenticated() async {
     return await _authService.isAuthenticated();
+  }
+
+  Future<User?> getUser() async {
+    final user = await _authService.getUser();
+    return user;
   }
 
   Future<void> logout() async {

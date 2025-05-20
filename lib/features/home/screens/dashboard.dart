@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gasto_0/Models/user.dart';
+import 'package:gasto_0/features/auth/providers/auth_provider.dart';
 import 'package:gasto_0/features/home/data.dart';
 import 'package:gasto_0/features/home/widgets/drawer_menu.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -29,6 +32,8 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -73,7 +78,23 @@ class _DashboardState extends State<Dashboard> {
                     DataColumn(label: Text('Categoria')),
                     DataColumn(label: Text('Fecha')),
                   ],
-                  source: DataSource(context))
+                  source: DataSource(context)),
+              const SizedBox(height: 20),
+              FutureBuilder(
+                  future: authProvider.getUser(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Text('Error al cargar el usuario');
+                    }
+
+                    final User? user = snapshot.data;
+                    return Text(user?.name ?? 'Usuario no encontrado',
+                        style: const TextStyle(fontSize: 20));
+                  })
             ],
           ),
         ),

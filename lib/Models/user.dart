@@ -22,9 +22,9 @@ class User {
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    name = json['nombre'];
     edad = json['edad'];
-    email = json['email'];
+    email = json['correo'];
   }
 
   Map<String, dynamic> toJson() {

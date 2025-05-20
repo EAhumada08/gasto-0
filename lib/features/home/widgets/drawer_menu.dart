@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gasto_0/features/auth/providers/auth_provider.dart';
 import 'package:gasto_0/features/auth/screens/login.dart';
+import 'package:provider/provider.dart';
 
 Widget drawerMenu(BuildContext context) {
+  AuthProvider authProvider = Provider.of<AuthProvider>(context);
   return Drawer(
     child: SafeArea(
       child: Column(
@@ -54,7 +57,8 @@ Widget drawerMenu(BuildContext context) {
                 ListTile(
                   leading: Icon(Icons.logout),
                   title: Text('Cerrar Sesion'),
-                  onTap: () {
+                  onTap: () async {
+                    await authProvider.logout();
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => Login()),

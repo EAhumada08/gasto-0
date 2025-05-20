@@ -4,7 +4,7 @@ import 'package:gasto_0/Models/user.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String _baseUrl = 'http://localhost:3000/api/auth/';
+  static const String _baseUrl = 'http://10.0.2.2:3000/api/auth/';
   static const String _userKey = 'user';
   static const String _tokenKey = 'token';
 
@@ -33,7 +33,6 @@ class AuthService {
         };
       } else {
         final errorData = json.decode(response.body);
-        print('s');
         return {
           'success': false,
           'message': errorData['message'] ?? 'An error occurred',
@@ -94,8 +93,11 @@ class AuthService {
 
   Future<User?> getUser() async {
     final userJson = await _secureStorage.read(key: _userKey);
+    print(userJson);
     if (userJson != null) {
-      return User.fromJson(json.decode(userJson));
+      final user = User.fromJson(json.decode(userJson));
+      print(user.id);
+      return user;
     }
     return null;
   }
