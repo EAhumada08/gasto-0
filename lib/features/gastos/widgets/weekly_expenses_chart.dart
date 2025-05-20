@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gasto_0/Models/expense.dart';
+import 'package:gasto_0/features/gastos/utils/filter_expenses.dart';
+import 'package:gasto_0/features/gastos/utils/filter_time.dart';
 import 'package:intl/intl.dart';
 
 class WeeklyExpensesChart extends StatefulWidget {
@@ -13,65 +15,52 @@ class WeeklyExpensesChart extends StatefulWidget {
 }
 
 class _WeeklyExpensesChartState extends State<WeeklyExpensesChart> {
-  DateTimeRange selectedWeek = _getCurrentWeek();
-
-  static DateTimeRange _getCurrentWeek() {
-    final now = DateTime.now();
-    final start = now.subtract(Duration(days: now.weekday - 1));
-    return DateTimeRange(
-        start: DateTime(start.year, start.month, start.day),
-        end: start.add(const Duration(days: 6)));
-  }
+  DateTimeRange selectedWeek = FilterTime.getCurrentWeek();
+  FilterExpenses filterExpenses = FilterExpenses();
+  FilterTime filterTime = FilterTime();
 
   @override
   Widget build(BuildContext context) {
-    final weeklyExpenses = widget.expenses
-        .where((expense) =>
-            (expense.date.isAfter(selectedWeek.start) ||
-                expense.date.isAtSameMomentAs(selectedWeek.start)) &&
-            (expense.date.isBefore(selectedWeek.end) ||
-                expense.date.isAtSameMomentAs(selectedWeek.end)))
-        .toList();
+    final expensesOfWeekSelected = filterExpenses.filterExpensesBySelectedWeek(
+        widget.expenses, selectedWeek);
 
-    List<DateTime> weeklyDates = [];
-    for (int i = 0; i < 7; i++) {
-      weeklyDates.add(DateTime(selectedWeek.start.year,
-          selectedWeek.start.month, selectedWeek.start.day + i));
-    }
+    List<DateTime> datesOfWeekSelected =
+        filterTime.getDatesOfSelectedWeek(selectedWeek);
 
-    final dailyData = _processExpensesByDay(weeklyExpenses, weeklyDates);
+    final dailyData = filterExpenses.processExpensesByDay(
+        expensesOfWeekSelected, datesOfWeekSelected);
 
     return AspectRatio(
       aspectRatio: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () => _changeWeek(-1),
-                    icon: const Icon(Icons.chevron_left)),
-                Text('${DateFormat('dd/MM').format(selectedWeek.start)}-'
-                    '${DateFormat('dd/MM').format(selectedWeek.end)}'),
-                IconButton(
-                    onPressed: () => _changeWeek(1),
-                    icon: Icon(Icons.chevron_right)),
-              ],
-            ),
-            Expanded(
-              child: BarChart(BarChartData(
-                  maxY: _calculateMaxY(dailyData),
-                  barGroups: _buildBarGroups(dailyData),
-                  titlesData: _buildTitlesData(),
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(show: false))),
-            )
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                  onPressed: () => _changeWeek(-1),
+                  icon: const Icon(Icons.chevron_left)),
+              Text('${DateFormat('dd/MM').format(selectedWeek.start)}-'
+                  '${DateFormat('dd/MM').format(selectedWeek.end)}'),
+              IconButton(
+                  onPressed: () => _changeWeek(1),
+                  icon: Icon(Icons.chevron_right)),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: BarChart(BarChartData(
+                maxY: _calculateMaxY(dailyData),
+                barGroups: _buildBarGroups(dailyData),
+                titlesData: _buildTitlesData(),
+                gridData: FlGridData(show: false),
+                borderData: FlBorderData(show: false))),
+          )
+        ],
       ),
     );
   }
@@ -89,7 +78,7 @@ class _WeeklyExpensesChartState extends State<WeeklyExpensesChart> {
           BarChartRodData(
             toY: amount,
             color: Colors.blue,
-            width: 20,
+            width: 10,
             borderRadius: BorderRadius.circular(5),
           ),
         ],
@@ -115,34 +104,47 @@ class _WeeklyExpensesChartState extends State<WeeklyExpensesChart> {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    final Widget text = Text(
-      '\$${value.toInt()}',
-      style: const TextStyle(
-        fontSize: 14,
-      ),
-    );
+    if (value >= 1000) {
+      return SideTitleWidget(
+        meta: meta,
+        space: 8,
+        child: Text(
+          '\$${(value / 1000).toStringAsFixed(1)}k',
+          style: const TextStyle(
+            fontSize: 14,
+          ),
+        ),
+      );
+    } else {
+      final Widget text = Text(
+        '\$${value.toInt()}',
+        style: const TextStyle(
+          fontSize: 14,
+        ),
+      );
 
-    return SideTitleWidget(
-      meta: meta,
-      space: 8,
-      child: text,
-    );
+      return SideTitleWidget(
+        meta: meta,
+        space: 8,
+        child: text,
+      );
+    }
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    final titles = <String>['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+    final titles = <String>['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
     final Widget text = Text(
       titles[value.toInt()],
       style: const TextStyle(
-        color: Colors.red,
+        color: Colors.grey,
         fontWeight: FontWeight.bold,
-        fontSize: 14,
+        fontSize: 15,
       ),
     );
     return SideTitleWidget(
       meta: meta,
-      space: 5,
+      space: 7,
       child: text,
     );
   }
@@ -154,31 +156,7 @@ class _WeeklyExpensesChartState extends State<WeeklyExpensesChart> {
         maxY = value;
       }
     }
-    return maxY + 100;
-  }
-
-  Map<DateTime, double> _processExpensesByDay(
-      List<Expense> expenses, List<DateTime> weeklyDates) {
-    final dailyExpenses = <DateTime, double>{};
-
-    for (var expense in expenses) {
-      final date = DateTime(
-        expense.date.year,
-        expense.date.month,
-        expense.date.day,
-      );
-
-      dailyExpenses.update(
-        date,
-        (value) => value + expense.amount,
-        ifAbsent: () => expense.amount,
-      );
-    }
-
-    for (var date in weeklyDates) {
-      dailyExpenses.putIfAbsent(date, () => 0);
-    }
-    return dailyExpenses;
+    return maxY;
   }
 
   void _changeWeek(int delta) {
