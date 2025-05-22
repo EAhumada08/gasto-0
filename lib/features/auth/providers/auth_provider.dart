@@ -36,4 +36,8 @@ class AuthProvider extends ChangeNotifier {
     await _authService.logout();
     notifyListeners();
   }
+
+  Future<String?> getToken() async {
+    return await _authService.getToken();
+  }
 }

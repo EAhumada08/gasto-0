@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gasto_0/core/widgets/input.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:gasto_0/features/auth/providers/auth_provider.dart';
 
 class AgregarGasto extends StatefulWidget {
   const AgregarGasto({super.key});
@@ -11,10 +15,9 @@ class AgregarGasto extends StatefulWidget {
 class _AgregarGastoState extends State<AgregarGasto> {
   String _selectedValueOfCategory = 'comida';
   final TextEditingController descripcionController = TextEditingController();
-
   final TextEditingController fechaController = TextEditingController();
-
   final TextEditingController montoController = TextEditingController();
+  bool _saving = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,6 @@ class _AgregarGastoState extends State<AgregarGasto> {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 20,
                 children: [
                   Input(
                       label: 'Descripcion', controller: descripcionController),
@@ -47,27 +49,85 @@ class _AgregarGastoState extends State<AgregarGasto> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // Lógica para agregar gasto
-                },
-                child: const Text('Agregar Gasto'),
-              ),
+              const SizedBox(height: 20),
+              _saving
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: () async {
+                        final descripcion = descripcionController.text;
+                        final monto = montoController.text;
+                        final fecha = fechaController.text;
+                        final categoria = _selectedValueOfCategory;
+
+                        if (descripcion.isEmpty ||
+                            monto.isEmpty ||
+                            fecha.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Completa todos los campos')),
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          _saving = true;
+                        });
+
+                        // Obtén el token del Provider
+                        final authProvider =
+                            Provider.of<AuthProvider>(context, listen: false);
+                        final token = await authProvider.getToken();
+
+                        // Petición HTTP con token
+                        final response = await http.post(
+                          Uri.parse(
+                              'http://localhost:3000/api/gastos/agregar_gasto'),
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer $token',
+                          },
+                          body: jsonEncode({
+                            'descripcion': descripcion,
+                            'monto': double.tryParse(monto) ?? 0,
+                            'fecha': fecha,
+                            'categoria': categoria,
+                          }),
+                        );
+
+                        print('STATUS: ${response.statusCode}');
+                        print('BODY: ${response.body}');
+
+                        setState(() {
+                          _saving = false;
+                        });
+
+                        if (response.statusCode == 200 ||
+                            response.statusCode == 201) {
+                          Navigator.pop(
+                              context); // Regresa a la pantalla anterior
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    'Error al agregar gasto: ${response.body}')),
+                          );
+                        }
+                      },
+                      child: const Text('Agregar Gasto'),
+                    ),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/agregar_gasto');
+          // Refresca la tabla al volver
+          setState(() {});
+        },
+        child: const Icon(Icons.add_circle_outline),
+      ),
     );
-  }
-
-  void _verDatos() {
-    print('Descripcion: ${descripcionController.text}');
-    print('Categoria: $_selectedValueOfCategory');
-    print('Monto: ${montoController.text}');
-    print('Fecha: ${fechaController.text}');
   }
 
   Widget categoryDropDownButton() {
@@ -88,7 +148,7 @@ class _AgregarGastoState extends State<AgregarGasto> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
               value: _selectedValueOfCategory,
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: 'comida',
                   child: Text('Comida'),
@@ -98,11 +158,11 @@ class _AgregarGastoState extends State<AgregarGasto> {
                   child: Text('Transporte'),
                 ),
               ],
-              onChanged: ((String? newValue) {
+              onChanged: (String? newValue) {
                 setState(() {
                   _selectedValueOfCategory = newValue!;
                 });
-              }),
+              },
             ),
           ),
         ),

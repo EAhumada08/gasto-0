@@ -4,7 +4,7 @@ import 'package:gasto_0/Models/user.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String _baseUrl = 'http://10.0.2.2:3000/api/auth/';
+  static const String _baseUrl = 'http://localhost:3000/api/auth/';
   static const String _userKey = 'user';
   static const String _tokenKey = 'token';
 

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class _Row {
   final String cellA;
@@ -13,23 +15,45 @@ class _Row {
 
 class DataSource extends DataTableSource {
   final BuildContext context;
+  final String token; // <-- Agrega esto
   late List<_Row> rows;
-
   int _selectedCount = 0;
 
-  DataSource(this.context) {
-    rows = [
-      _Row('Fruta', '\$ 100', 'Comida', '02-05-2025'),
-      _Row('Pasaje', '\$ 50', 'Transporte', '02-05-2025'),
-      _Row('Pago de luz', '\$ 10000', 'Hogar', '01-01-2025'),
-      _Row('Despensa', '\$ 2000', 'Hogar', '-02-05-2025'),
-    ];
+  DataSource(this.context, this.token) {
+    rows = [];
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/api/gastos/ver_gastos'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    //print('STATUS: ${response.statusCode}');
+    //print('BODY: ${response.body}');
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      final List data = decoded['expenses'] ?? [];
+      //print('DATA DECODED: $data');
+      rows = data
+          .map((item) => _Row(
+                (item['descripcion'] ?? '').toString(),
+                '\$ ${(item['monto'] ?? '').toString()}',
+                (item['categoria'] ?? '').toString(),
+                (item['fecha'] ?? '').toString(),
+              ))
+          .toList();
+    } else {
+      rows = [];
+    }
+    notifyListeners();
   }
 
   @override
-  DataRow getRow(int index) {
-    assert(index >= 0);
-    if (index >= rows.length) return null!;
+  DataRow? getRow(int index) {
+    if (index >= rows.length) return null;
     final row = rows[index];
     return DataRow.byIndex(
       index: index,
