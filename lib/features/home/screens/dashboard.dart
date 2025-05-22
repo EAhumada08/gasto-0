@@ -14,7 +14,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   DateTime _date = DateTime.now();
-  int _tableKey = 0; // Agrega esta línea
+  int _tableKey = 0; 
 
   void _selectDate() async {
     final DateTime? newDate = await showDatePicker(

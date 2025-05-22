@@ -72,13 +72,9 @@ class _AgregarGastoState extends State<AgregarGasto> {
                         setState(() {
                           _saving = true;
                         });
-
-                        // Obtén el token del Provider
                         final authProvider =
                             Provider.of<AuthProvider>(context, listen: false);
                         final token = await authProvider.getToken();
-
-                        // Petición HTTP con token
                         final response = await http.post(
                           Uri.parse(
                               'http://localhost:3000/api/gastos/agregar_gasto'),
@@ -122,7 +118,6 @@ class _AgregarGastoState extends State<AgregarGasto> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.pushNamed(context, '/agregar_gasto');
-          // Refresca la tabla al volver
           setState(() {});
         },
         child: const Icon(Icons.add_circle_outline),
