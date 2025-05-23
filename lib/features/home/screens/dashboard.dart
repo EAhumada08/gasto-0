@@ -14,7 +14,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   DateTime _date = DateTime.now();
-  int _tableKey = 0; 
+  int _tableKey = 0;
 
   void _selectDate() async {
     final DateTime? newDate = await showDatePicker(
@@ -64,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
                         onPressed: () async {
                           await Navigator.pushNamed(context, '/agregar_gasto');
                           setState(() {
-                            _tableKey++; 
+                            _tableKey++;
                           });
                         },
                         icon: Icon(Icons.add_circle_outline),
@@ -120,15 +120,17 @@ class _GastosTableState extends State<GastosTable> {
     final token = await authProvider.getToken();
     _dataSource = DataSource(context, token ?? '');
     await _dataSource!.fetchData();
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
   void didUpdateWidget(covariant GastosTable oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _initDataSource(); 
+    _initDataSource();
   }
 
   @override

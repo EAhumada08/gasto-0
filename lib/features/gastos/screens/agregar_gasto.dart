@@ -90,8 +90,8 @@ class _AgregarGastoState extends State<AgregarGasto> {
                           }),
                         );
 
-                        print('STATUS: ${response.statusCode}');
-                        print('BODY: ${response.body}');
+                        //print('STATUS: ${response.statusCode}');
+                        //print('BODY: ${response.body}');
 
                         setState(() {
                           _saving = false;
@@ -100,7 +100,7 @@ class _AgregarGastoState extends State<AgregarGasto> {
                         if (response.statusCode == 200 ||
                             response.statusCode == 201) {
                           Navigator.pop(
-                              context); // Regresa a la pantalla anterior
+                              context); 
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -115,13 +115,13 @@ class _AgregarGastoState extends State<AgregarGasto> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/agregar_gasto');
-          setState(() {});
-        },
-        child: const Icon(Icons.add_circle_outline),
-      ),
+      //floatingActionButton: FloatingActionButton(
+        //onPressed: () async {
+          //await Navigator.pushNamed(context, '/agregar_gasto');
+          //setState(() {});
+        //},
+        //child: const Icon(Icons.add_circle_outline),
+      //),
     );
   }
 
