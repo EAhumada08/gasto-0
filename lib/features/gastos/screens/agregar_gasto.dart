@@ -35,17 +35,39 @@ class _AgregarGastoState extends State<AgregarGasto> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Input(
-                      label: 'Descripcion', controller: descripcionController),
+                    label: 'Descripcion',
+                    controller: descripcionController,
+                    readOnly: false,
+                    onTap: () async {},
+                  ),
                   categoryDropDownButton(),
                   Input(
                     label: 'Monto',
                     controller: montoController,
                     icono: Icons.attach_money,
+                    readOnly: false,
+                    onTap: () async {},
                   ),
                   Input(
                     label: 'Fecha',
                     controller: fechaController,
                     icono: Icons.calendar_month,
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null) {
+                        String formattedDate =
+                            "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                        setState(() {
+                          fechaController.text = formattedDate;
+                        });
+                      }
+                    },
                   ),
                 ],
               ),
@@ -99,8 +121,7 @@ class _AgregarGastoState extends State<AgregarGasto> {
 
                         if (response.statusCode == 200 ||
                             response.statusCode == 201) {
-                          Navigator.pop(
-                              context); 
+                          Navigator.pop(context);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -116,11 +137,11 @@ class _AgregarGastoState extends State<AgregarGasto> {
         ),
       ),
       //floatingActionButton: FloatingActionButton(
-        //onPressed: () async {
-          //await Navigator.pushNamed(context, '/agregar_gasto');
-          //setState(() {});
-        //},
-        //child: const Icon(Icons.add_circle_outline),
+      //onPressed: () async {
+      //await Navigator.pushNamed(context, '/agregar_gasto');
+      //setState(() {});
+      //},
+      //child: const Icon(Icons.add_circle_outline),
       //),
     );
   }
@@ -151,6 +172,26 @@ class _AgregarGastoState extends State<AgregarGasto> {
                 DropdownMenuItem(
                   value: 'transporte',
                   child: Text('Transporte'),
+                ),
+                DropdownMenuItem(
+                  value: 'Educacion',
+                  child: Text('Educacion'),
+                ),
+                DropdownMenuItem(
+                  value: 'Entretenimiento',
+                  child: Text('Entretenimiento'),
+                ),
+                DropdownMenuItem(
+                  value: 'Salud',
+                  child: Text('Salud'),
+                ),
+                DropdownMenuItem(
+                  value: 'Mascotas',
+                  child: Text('Mascotas'),
+                ),
+                DropdownMenuItem(
+                  value: 'Otros',
+                  child: Text('Otros'),
                 ),
               ],
               onChanged: (String? newValue) {

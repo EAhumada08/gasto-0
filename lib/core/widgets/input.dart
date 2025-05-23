@@ -10,7 +10,7 @@ class Input extends StatelessWidget {
     required this.label,
     this.isPassword = false,
     this.icono,
-    required this.controller,
+    required this.controller, required bool readOnly, required Future<Null> Function() onTap,
   });
 
   @override
