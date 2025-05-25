@@ -24,11 +24,47 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          textAlign: TextAlign.center,
-          'Gasto 0',
-          style: Theme.of(context).primaryTextTheme.titleLarge,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.account_balance_wallet_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Gasto 0',
+              style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    color: Colors.blueAccent,
+                    letterSpacing: 1.2,
+                  ),
+            ),
+          ],
         ),
+        backgroundColor: Colors.white,
+        elevation: 2,
       ),
       body: Center(
         child: Column(
