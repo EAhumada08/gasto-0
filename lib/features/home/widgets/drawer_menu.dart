@@ -26,6 +26,9 @@ Widget drawerMenu(BuildContext context) {
                 ListTile(
                   leading: Icon(Icons.home),
                   title: Text('Inicio'),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.format_list_bulleted_add),
@@ -37,6 +40,9 @@ Widget drawerMenu(BuildContext context) {
                 ListTile(
                   leading: Icon(Icons.pending_actions_outlined),
                   title: Text('Reportes'),
+                  onTap: () {
+                    Navigator.pushNamed(context, 'reporte_gasto');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.stacked_line_chart_sharp),
@@ -53,6 +59,9 @@ Widget drawerMenu(BuildContext context) {
                 ListTile(
                   leading: Icon(Icons.settings),
                   title: Text('Configuracion'),
+                  onTap: () {
+                    Navigator.pushNamed(context, 'configuracion');
+                  },
                 ),
                 ListTile(
                   leading: Icon(Icons.logout),
